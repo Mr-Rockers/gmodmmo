@@ -12,6 +12,14 @@
 
 local allInventories = {}
 
+function GetPlayerID(ply)
+
+	local spawnedPlayerID = ply:SteamID64()
+	spawnedPlayerID = spawnedPlayerID != nil and spawnedPlayerID or "client"
+	return spawnedPlayerID
+
+end
+
 function SavePlayerInventories()
 	if allInventories != nil and next(allInventories) != nil then
 		local jsonTable = util.TableToJSON(allInventories, true)
@@ -41,10 +49,8 @@ end
 
 --Add player SteamID64 to inventories table if it's not already there.
 local function OnPlayerSpawn(ply)
-	local spawnedPlayerID = ply:SteamID64()
-	
-	spawnedPlayerID = spawnedPlayerID != nil and spawnedPlayerID or "client"
-	
+
+	local spawnedPlayerID = GetPlayerID(ply)
 	print("Player spawned! " .. spawnedPlayerID)
 	
 	if allInventories["players"] == nil then
