@@ -1,6 +1,6 @@
 "gmodmmo" {
 	"base"		"base"
 	"title"		"Garry's Mod MMO Engine"
-	"maps"		"^mmo_"
+	"maps"		"^gmmo_"
 	"menusystem"	"1"
 }
