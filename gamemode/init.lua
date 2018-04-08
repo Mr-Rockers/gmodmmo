@@ -6,6 +6,7 @@ AddCSLuaFile( "render/r_playerhud.lua" )
 
 include( "shared.lua" )
 include( "_serverside/sr_inventory.lua" )
+include( "_serverside/sr_physics.lua" )
 
 --Precache Messages--
 util.AddNetworkString("RENDER_SwitchThirdperson")
@@ -23,10 +24,8 @@ function GM:PlayerButtonDown(ply, button)
 	end
 end
 
-function GM:PlayerNoClip(ply, desiredState)
-
-	return false
-end
+--Disable player noclip.
+function GM:PlayerNoClip(ply, desiredState) return false end
 
 lastFootstepType = 0
 function GM:PlayerStepSoundTime(ply, type, walking)

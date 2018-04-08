@@ -50,7 +50,7 @@ local function updateFovSprint(isSprinting)
 	end
 end
 
-local function _PlayerView(ply, pos, angles, fov)
+local function playerView(ply, pos, angles, fov)
 	local view = {}
 	
 	updateHeadBob(ply:IsOnGround() and ply:GetVelocity():Length() > FOOTSTEP_TRIGGER_VELOCITY and (ply:KeyDown(IN_FORWARD) or ply:KeyDown(IN_BACK) or ply:KeyDown(IN_MOVELEFT) or ply:KeyDown(IN_MOVERIGHT)), ply:Crouching())
@@ -72,4 +72,4 @@ local function _PlayerView(ply, pos, angles, fov)
 
 end
 
-hook.Add( "CalcView", "_PlayerView", _PlayerView )
+hook.Add( "CalcView", "r_playerview_playerview", playerView )

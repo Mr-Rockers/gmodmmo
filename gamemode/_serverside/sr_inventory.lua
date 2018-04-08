@@ -20,7 +20,7 @@ function GetPlayerID(ply)
 
 end
 
-function SavePlayerInventories()
+function savePlayerInventories()
 	if allInventories != nil and next(allInventories) != nil then
 		local jsonTable = util.TableToJSON(allInventories, true)
 		
@@ -33,7 +33,7 @@ function SavePlayerInventories()
 	end
 end
 
-function LoadPlayerInventories()
+function loadPlayerInventories()
 
 	if file.Exists("gmodmmo_save/inventories.txt", "DATA") then
 		local jsonRawTable = file.Read("gmodmmo_save/inventories.txt", "DATA")
@@ -48,7 +48,7 @@ function LoadPlayerInventories()
 end
 
 --Add player SteamID64 to inventories table if it's not already there.
-local function OnPlayerSpawn(ply)
+local function onPlayerSpawn(ply)
 
 	local spawnedPlayerID = GetPlayerID(ply)
 	print("Player spawned! " .. spawnedPlayerID)
@@ -63,9 +63,10 @@ local function OnPlayerSpawn(ply)
 	
 end
 
+hook.Add( "PlayerButtonDown", "sr_inventory_input", function(ply, button)
+	
+end)
 
-function SendInventoryToPlayer(ply, inv)
-end
-hook.Add( "Initialize", "sr_inventory_LoadPlayerInventoriesOnInit", LoadPlayerInventories)
-hook.Add( "PlayerSpawn", "sr_inventory_OnPlayerSpawn", OnPlayerSpawn)
-hook.Add( "ShutDown", "sr_inventory_SavePlayerInventoriesOnClose", SavePlayerInventories)
+hook.Add( "Initialize", "sr_inventory_loadPlayerInventoriesOnInit", loadPlayerInventories)
+hook.Add( "PlayerSpawn", "sr_inventory_onPlayerSpawn", onPlayerSpawn)
+hook.Add( "ShutDown", "sr_inventory_savePlayerInventoriesOnClose", savePlayerInventories)

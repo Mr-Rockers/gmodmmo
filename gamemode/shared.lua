@@ -14,3 +14,6 @@ FOOTSTEP_TRIGGER_VELOCITY = 90 --Found from experimenting in-game.
 function GM:Initialize()
 
 end
+
+--Disables default TAB scoreboard.
+hook.Add("ScoreboardShow", "shared_scoreboarddisable", function() return false end)

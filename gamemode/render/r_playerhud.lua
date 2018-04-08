@@ -1,4 +1,4 @@
-hook.Add( "Initialize", "LoadGUIFonts", function()
+hook.Add( "Initialize", "r_playerhud_loadfonts", function()
 
 	surface.CreateFont( "MMOCourierNew_25", {
 		font = "Courier New",
@@ -26,7 +26,7 @@ local compassLineHeight = 20 -- As ration of compass height.
 local compassBackgroundColor = Color(0, 0, 0, 64)
 local compassColor = Color(255, 255, 255, 64)
 
-hook.Add( "HUDPaint", "HUDPaint_DrawCompass", function()
+hook.Add( "HUDPaint", "r_playerhud_drawcompass", function()
 	
 	--Get dimensions.
 	local actualCompassWidth = ScrW() * compassWidth
@@ -53,5 +53,5 @@ hook.Add( "HUDPaint", "HUDPaint_DrawCompass", function()
 	draw.SimpleText( "S", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw + 180	))) / 2, actualCompassHeight * 1.5, 	Color(255, 255, 255, 255 * math.max(0, math.cos(math.rad(rawYaw + 180)))), 1, 4)
 	
 	--surface.DrawRect(ScrW() - compassWidth, 25, 100, 100)
-	
+		
 end)
