@@ -1,3 +1,5 @@
 include( "shared.lua" )
-include( "render/r_playerview.lua" )
-include( "render/r_playerhud.lua" )
+include( "_clientside/cl_network.lua" )
+include( "_clientside/cl_inventory.lua" )
+include( "_clientside/render/r_playerview.lua" )
+include( "_clientside/render/r_playerhud.lua" )

@@ -1,10 +1,5 @@
 
 --HEAD BOB
-local currentFootstepType = 0
-net.Receive("RENDER_FootstepType", function(len, ply)
-	currentFootstepType = net.ReadInt(3)
-	print("currentFootstepType: " .. tostring(currentFootstepType))
-end )
 
 local bobHeadRaw = 0.0
 local bobHeadToIdleSpeed = 5
@@ -13,7 +8,7 @@ local bobHeadCurAdj = 0.0
 
 local function updateHeadBob(isWalking, isCrouching)
 
-	if isWalking and (currentFootstepType == 0) then
+	if isWalking and (CLNET_CURRENT_FOOTSTEP_TYPE == 0) then
 		bobHeadRaw = bobHeadRaw + (FrameTime() / math.pi) * 20 * (1000 / FOOTSTEP_DEFAULT_SPEED) * (isCrouching and FOOTSTEP_CROUCH_MOD or 1)
 	else
 		if bobHeadRaw <= math.pi then
@@ -29,13 +24,6 @@ local function updateHeadBob(isWalking, isCrouching)
 	
 	bobHeadCurAdj = math.sin(bobHeadRaw) * bobHeadMaxAdj
 end
-
---THIRD PERSON CALCULATIONS
-local thirdperson = false
-net.Receive("RENDER_SwitchThirdperson", function(len, ply)
-	thirdperson = !thirdperson
-	print("thirdperson: " .. tostring(thirdperson))
-end )
 
 --FOV INCREASE ON SPRINT
 local fovMaxAdj = 1.15
@@ -55,7 +43,7 @@ local function playerView(ply, pos, angles, fov)
 	
 	updateHeadBob(ply:IsOnGround() and ply:GetVelocity():Length() > FOOTSTEP_TRIGGER_VELOCITY and (ply:KeyDown(IN_FORWARD) or ply:KeyDown(IN_BACK) or ply:KeyDown(IN_MOVELEFT) or ply:KeyDown(IN_MOVERIGHT)), ply:Crouching())
 	
-	if thirdperson then
+	if CLNET_VIEW_THIRDPERSON then
 		view.origin = pos - angles:Forward()*100
 	else
 		local fwdVec = (Angle(0, angles.yaw, 0)):Forward() * 10

@@ -10,19 +10,12 @@
 
 --------SERVERSIDE--------
 
-local allInventories = {}
+AllInventories = {}
+InventoryStates = {}
 
-function GetPlayerID(ply)
-
-	local spawnedPlayerID = ply:SteamID64()
-	spawnedPlayerID = spawnedPlayerID != nil and spawnedPlayerID or "client"
-	return spawnedPlayerID
-
-end
-
-function savePlayerInventories()
-	if allInventories != nil and next(allInventories) != nil then
-		local jsonTable = util.TableToJSON(allInventories, true)
+local function savePlayerInventories()
+	if AllInventories != nil and next(AllInventories) != nil then
+		local jsonTable = util.TableToJSON(AllInventories, true)
 		
 		if jsonTable != nil then
 			print("Saving inventories...")
@@ -33,39 +26,37 @@ function savePlayerInventories()
 	end
 end
 
-function loadPlayerInventories()
+local function loadPlayerInventories()
 
 	if file.Exists("gmodmmo_save/inventories.txt", "DATA") then
 		local jsonRawTable = file.Read("gmodmmo_save/inventories.txt", "DATA")
 		if jsonRawTable != nil then
 			print("Loading inventories...")
 			local jsonTable = util.JSONToTable(jsonRawTable)
-			allInventories = jsonTable != nil and jsonTable or {}
+			AllInventories = jsonTable != nil and jsonTable or {}
 			print("Loaded!")
 		end
 	end
 	
 end
 
---Add player SteamID64 to inventories table if it's not already there.
+--Add player SteamID64 to inventories table if it's not already there. 
 local function onPlayerSpawn(ply)
 
 	local spawnedPlayerID = GetPlayerID(ply)
 	print("Player spawned! " .. spawnedPlayerID)
 	
-	if allInventories["players"] == nil then
-		allInventories["players"] = {}
+	if AllInventories["players"] == nil then
+		AllInventories["players"] = {}
 	end
 	
-	if allInventories["players"][spawnedPlayerID] == nil then
-		allInventories["players"][spawnedPlayerID] = {}
+	if AllInventories["players"][spawnedPlayerID] == nil then
+		AllInventories["players"][spawnedPlayerID] = {}
 	end
+	
+	InventoryStates[spawnedPlayerID] = false --Closes the player's inventory when spawned in.
 	
 end
-
-hook.Add( "PlayerButtonDown", "sr_inventory_input", function(ply, button)
-	
-end)
 
 hook.Add( "Initialize", "sr_inventory_loadPlayerInventoriesOnInit", loadPlayerInventories)
 hook.Add( "PlayerSpawn", "sr_inventory_onPlayerSpawn", onPlayerSpawn)

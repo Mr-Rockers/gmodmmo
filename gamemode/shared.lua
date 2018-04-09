@@ -10,6 +10,13 @@ FOOTSTEP_UNDERWATER_SPEED = 500
 FOOTSTEP_CROUCH_MOD = 0.75
 FOOTSTEP_TRIGGER_VELOCITY = 90 --Found from experimenting in-game.
 
+function GetPlayerID(ply)
+
+	local spawnedPlayerID = ply:SteamID64()
+	spawnedPlayerID = spawnedPlayerID != nil and spawnedPlayerID or "client"
+	return spawnedPlayerID
+
+end
 
 function GM:Initialize()
 
