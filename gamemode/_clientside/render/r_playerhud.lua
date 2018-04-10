@@ -1,11 +1,4 @@
-local freeCursorLastEnabledState = false
-local function freeCursor(enable)
-	if freeCursorLastEnabledState != enable then
-		gui.EnableScreenClicker(enable)
-		freeCursorLastEnabledState = enable
-	end
-end
-
+--LOAD FONTS
 hook.Add( "Initialize", "r_playerhud_loadfonts", function()
 
 	surface.CreateFont( "MMOCourierNew_25", {
@@ -27,49 +20,125 @@ hook.Add( "Initialize", "r_playerhud_loadfonts", function()
 	})
 end)
 
+--LOAD MATERIALS
+hook.Add( "Initialize", "r_playerhud_loadmats", function()
+MATERIAL_CROSSHAIR_OPENDOOR = Material("sprites/openDoor.png", "noclamp smooth")
+end )
+
+--FREE CURSOR STATE MANAGER
+local freeCursorLastEnabledState = false
+local function freeCursor(enable)
+	if freeCursorLastEnabledState != enable then
+		gui.EnableScreenClicker(enable)
+		freeCursorLastEnabledState = enable
+	end
+end
+
+
+local guiLineHeight = 500 -- As ratio of screen height
+local guiBackgroundColor = Color(0, 0, 0, 192)
+local guiForegroundColor = Color(255, 255, 255, 64)
+
 local compassWidth  = 0.15   -- As ratio of screen size.
 local compassHeight = 0.05   -- As ratio of screen size.
-local compassLineHeight = 20 -- As ration of compass height.
 
-local compassBackgroundColor = Color(0, 0, 0, 64)
-local compassColor = Color(255, 255, 255, 64)
+local function getGuiLineHeight()
+	return ScrH() / guiLineHeight
+end
 
 hook.Add( "HUDPaint", "r_playerhud_drawcompass", function()
 	
 	--Get dimensions.
 	local actualCompassWidth = ScrW() * compassWidth
 	local actualCompassHeight = ScrH() * compassHeight
-	local actualCompassLineHeight = actualCompassHeight / compassLineHeight
+	local actualGuiLineHeight = getGuiLineHeight()
 
-
-	surface.SetDrawColor( compassBackgroundColor )
-	surface.DrawRect( (ScrW() - actualCompassWidth) / 2, actualCompassHeight / 2, actualCompassWidth, actualCompassHeight)
+	--Draw background.
+	surface.SetDrawColor( guiBackgroundColor )
+	surface.DrawRect( (ScrW() - actualCompassWidth) * 0.5, actualCompassHeight * 0.5, actualCompassWidth, actualCompassHeight)
 	
-	surface.SetDrawColor( compassColor )
-	surface.DrawRect( (ScrW() - actualCompassWidth) / 2, actualCompassHeight * 0.5, actualCompassWidth, actualCompassLineHeight)
-	surface.DrawRect( (ScrW() - actualCompassWidth) / 2, actualCompassHeight * 1.5, actualCompassWidth, actualCompassLineHeight)
+	--Draw lines.
+	surface.SetDrawColor( guiForegroundColor )
+	surface.DrawRect( (ScrW() - actualCompassWidth) * 0.5, (actualCompassHeight * 0.5), actualCompassWidth, actualGuiLineHeight)
+	surface.DrawRect( (ScrW() - actualCompassWidth) * 0.5, (actualCompassHeight * 1.5), actualCompassWidth, actualGuiLineHeight)
 	
 	local rawYaw = LocalPlayer():EyeAngles().y
 	
 	local textYaw = math.floor(rawYaw + 0.5)
 	textYaw = textYaw < 0 and textYaw * -1 or 360 - textYaw --Used to fix signing issues in the yaw angles. Could be incorrect and needs further checking down the road.
-	draw.SimpleText( string.format("%0003u", textYaw == 360 and 0 or textYaw)  .. "°", "MMOCourierNew_25", ScrW() / 2, actualCompassHeight * 0.5 + actualCompassLineHeight, Color(255, 255, 255, 255), 1)
+	draw.SimpleText( string.format("%0003u", textYaw == 360 and 0 or textYaw)  .. "°", "MMOCourierNew_25", ScrW() * 0.5, actualCompassHeight * 0.5 + actualGuiLineHeight, Color(255, 255, 255, 255), 1)
 	
-	draw.SimpleText( "N", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw		))) / 2, actualCompassHeight * 1.5, 	Color(255, 128, 128, 255 * math.max(0, math.cos(math.rad(rawYaw)))), 		1, 4)
-	draw.SimpleText( "W", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw - 90	))) / 2, actualCompassHeight * 1.5, 	Color(255, 255, 255, 255 * math.max(0, math.cos(math.rad(rawYaw - 90)))), 	1, 4)
-	draw.SimpleText( "E", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw + 90	))) / 2, actualCompassHeight * 1.5, 	Color(255, 255, 255, 255 * math.max(0, math.cos(math.rad(rawYaw + 90)))),	1, 4)
-	draw.SimpleText( "S", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw + 180	))) / 2, actualCompassHeight * 1.5, 	Color(255, 255, 255, 255 * math.max(0, math.cos(math.rad(rawYaw + 180)))), 	1, 4)
+	draw.SimpleText( "N", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw		))) * 0.5, actualCompassHeight * 1.5, 	Color(255, 128, 128, 255 * math.max(0, math.cos(math.rad(rawYaw)))), 		1, 4)
+	draw.SimpleText( "W", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw - 90	))) * 0.5, actualCompassHeight * 1.5, 	Color(255, 255, 255, 255 * math.max(0, math.cos(math.rad(rawYaw - 90)))), 	1, 4)
+	draw.SimpleText( "E", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw + 90	))) * 0.5, actualCompassHeight * 1.5, 	Color(255, 255, 255, 255 * math.max(0, math.cos(math.rad(rawYaw + 90)))),	1, 4)
+	draw.SimpleText( "S", "MMOCourierNew_25", (ScrW() + (actualCompassWidth - 25) * math.sin(math.rad(rawYaw + 180	))) * 0.5, actualCompassHeight * 1.5, 	Color(255, 255, 255, 255 * math.max(0, math.cos(math.rad(rawYaw + 180)))), 	1, 4)
 	
 	--surface.DrawRect(ScrW() - compassWidth, 25, 100, 100)
 		
 end)
 
+local inventoryWidth  = 0.4 -- As ratio of screen size.
+local inventoryHeight = 1.1 -- Multiplier of inventoryWidth
+local inventoryOpacity = 0.0
+local inventoryFadeSpeed = 20
+
 hook.Add( "HUDPaint", "r_playerhud_drawinventory", function()
 
 	freeCursor(CLNET_LOCALPLAYER_INVENTORY_OPEN)
 
-	if CLNET_LOCALPLAYER_INVENTORY_OPEN then
-		surface.DrawRect(0, 0, 25, 25, compassColor) --example
-	end
+	inventoryOpacity = Lerp(FrameTime() * inventoryFadeSpeed, inventoryOpacity, CLNET_LOCALPLAYER_INVENTORY_OPEN and 1.0 or 0.0)
+
+	local inventoryBackgroundColor = Color(guiBackgroundColor.r, guiBackgroundColor.g, guiBackgroundColor.b, guiBackgroundColor.a * inventoryOpacity)
+	local inventoryForegroundColor = Color(guiForegroundColor.r, guiForegroundColor.g, guiForegroundColor.b, guiForegroundColor.a * inventoryOpacity)
+	
+	--Get dimensions.
+	local actualInventoryWidth = ScrW() * inventoryWidth
+	local actualInventoryHeight = actualInventoryWidth * inventoryHeight
+	local actualGuiLineHeight = getGuiLineHeight()
+	
+	--Draw background
+	surface.SetDrawColor( inventoryBackgroundColor )
+	surface.DrawRect((ScrW() - actualInventoryWidth) * 0.5, (ScrH() - actualInventoryHeight) * 0.5, actualInventoryWidth, actualInventoryHeight)
+	
+	--Draw lines.
+	surface.SetDrawColor( inventoryForegroundColor )
+	surface.DrawRect((ScrW() - actualInventoryWidth) * 0.5, ((ScrH() - actualInventoryHeight) * 0.5), actualInventoryWidth, actualGuiLineHeight)
+	surface.DrawRect((ScrW() - actualInventoryWidth) * 0.5, ((ScrH() - actualInventoryHeight) * 0.5) + actualInventoryHeight, actualInventoryWidth, actualGuiLineHeight)
 
 end)
+
+hook.Add("HUDPaint", "r_playerhud_drawcrosshair", function()
+
+	if !CLNET_LOCALPLAYER_INVENTORY_OPEN then
+		surface.SetMaterial(MATERIAL_CROSSHAIR_OPENDOOR)
+		surface.SetDrawColor(255, 255, 255, 255)
+		surface.DrawTexturedRect(ScrW() / 2 - 50, ScrH() / 2 - 50, 100, 100) --TODO CHANGE THIS !!!!
+	end
+end)
+
+--Disables default HUD for showing a player's name when the crosshair is pointed at them.
+function GM:HUDDrawTargetID()
+end
+
+local defaultHUDElementToHide = { --IF ELEMENT IS TRUE, IT WILL BE HIDDEN.
+	["CHudAmmo"] = true,
+	["CHudBattery"] = true,
+	["CHudChat"] = false, --DO NOT SET THIS TO TRUE OR IT WILL CAUSE BUGS. TRY AND DO SOMETHING WITH THIS IN THE FUTURE WHEN IT'S APPROPRIATE.
+	["CHudCrosshair"] = true,
+	["CHudDamageIndicator"] = true,
+	["CHudGeiger"] = true,
+	["CHudHealth"] = false, --TODO CHANGE AND UPDATE THIS
+	["CHudHintDisplay"] = true,
+	["CHudMenu"] = false, --TODO CHANGE AND UPDATE THIS
+	["CHudMessage"] = false,
+	["CHudPoisonDamageIndicator"] = true,
+	["CHudSecondaryAmmo"] = true,
+	["CHudSquadStatus"] = true,
+	["CHudTrain"] = true,
+	["CHudVehicle"] = true,
+	["CHudWeapon"] = true,
+	["CHudWeaponSelection"] = true,
+	["CHudZoom"] = true,
+	["NetGraph"] = false --User should be able to check net statistics.
+}
+hook.Add("HUDShouldDraw", "r_playerhud_drawdefaultelements", function(name) if (defaultHUDElementToHide[name]) then return false end end)

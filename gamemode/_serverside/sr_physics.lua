@@ -10,7 +10,7 @@ local function tickPhysics()
 		
 		for _, ply in ipairs (player.GetAll()) do
 			ply:SetGravity(2)
-			ply:SetJumpPower(275) --200 is the default
+			ply:SetJumpPower(250) --200 is the default
 		end
 		
 		physUpdateTimer = 0.0

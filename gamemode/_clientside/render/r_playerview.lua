@@ -51,11 +51,16 @@ local function playerView(ply, pos, angles, fov)
 	end
 	
 	updateFovSprint(!ply:Crouching() and ply:GetVelocity():Length() > FOOTSTEP_TRIGGER_VELOCITY and ply:KeyDown(IN_SPEED) and (ply:KeyDown(IN_FORWARD) or ply:KeyDown(IN_BACK) or ply:KeyDown(IN_MOVELEFT) or ply:KeyDown(IN_MOVERIGHT)))
-	view.fov = fov * fovCurAdj
+	
+	-- Fix FOV bug where the camera clips inside of the body when sprinting.
+	local fovDefault = fov
+	local fovSprint = fov * fovCurAdj
+	view.fov = Lerp(CLNET_VIEW_THIRDPERSON and 1 or 1-(math.max(0, angles.p) / 90), fovDefault, fovSprint)
+	--Disable the playermodel when looking up. 
+	view.drawviewer = CLNET_VIEW_THIRDPERSON or angles.p >= 0
 	
 	view.angles = angles
-	view.drawviewer = true
-
+	
 	return view
 
 end
