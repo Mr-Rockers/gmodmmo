@@ -10,6 +10,7 @@ include( "shared.lua" )
 include( "_serverside/sr_network.lua" )
 include( "_serverside/sr_physics.lua" )
 include( "_serverside/sr_inventory.lua" )
+include( "_serverside/sr_interactions.lua" )
 
 --Disable player noclip.
 function GM:PlayerNoClip(ply, desiredState) return false end

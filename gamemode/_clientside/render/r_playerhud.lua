@@ -22,7 +22,8 @@ end)
 
 --LOAD MATERIALS
 hook.Add( "Initialize", "r_playerhud_loadmats", function()
-MATERIAL_CROSSHAIR_OPENDOOR = Material("sprites/openDoor.png", "noclamp smooth")
+MATERIAL_CROSSHAIR_DEFAULT = Material("crosshairs/default.png", "noclamp smooth")
+MATERIAL_CROSSHAIR_DOOR = Material("crosshairs/door.png", "noclamp smooth")
 end )
 
 --FREE CURSOR STATE MANAGER
@@ -110,9 +111,17 @@ end)
 hook.Add("HUDPaint", "r_playerhud_drawcrosshair", function()
 
 	if !CLNET_LOCALPLAYER_INVENTORY_OPEN then
-		surface.SetMaterial(MATERIAL_CROSSHAIR_OPENDOOR)
-		surface.SetDrawColor(255, 255, 255, 255)
-		surface.DrawTexturedRect(ScrW() / 2 - 50, ScrH() / 2 - 50, 100, 100) --TODO CHANGE THIS !!!!
+	
+		local cursorSize = 20
+		
+		surface.SetDrawColor(255, 255, 255, 64)
+		
+		if CLNET_CURRENT_CROSSHAIR_TYPE == 0 then surface.SetMaterial(MATERIAL_CROSSHAIR_DEFAULT)
+		elseif CLNET_CURRENT_CROSSHAIR_TYPE == 1 then surface.SetMaterial(MATERIAL_CROSSHAIR_DOOR) surface.SetDrawColor(255, 255, 255, 64) cursorSize = 75
+		else surface.SetMaterial(MATERIAL_CROSSHAIR_DEFAULT) end
+		
+		
+		surface.DrawTexturedRect( (ScrW() - cursorSize) / 2, (ScrH() - cursorSize) / 2, cursorSize, cursorSize)
 	end
 end)
 

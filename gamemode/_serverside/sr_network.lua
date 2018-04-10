@@ -1,5 +1,6 @@
 --Precache Messages--
 util.AddNetworkString("RENDER_SwitchThirdperson")
+util.AddNetworkString("RENDER_CrosshairType")
 util.AddNetworkString("RENDER_FootstepType")
 util.AddNetworkString("PLAYER_Inventory_ToClient")
 util.AddNetworkString("PLAYER_Inventory_ToServer")
@@ -26,13 +27,33 @@ function GM:PlayerButtonDown(ply, button)
 	
 end
 
-local lastFootstepType = 0
+--Update crosshair type
+local lastCrosshairType
+function Srnet_UpdateCrosshairType(ply, crosshairType)
+	local playerID = GetPlayerID(ply)
+	
+	if lastCrosshairType == nil then lastCrosshairType = {} end
+	
+	if lastCrosshairType[playerID] == nil or lastCrosshairType[playerID] != crosshairType then
+		net.Start("RENDER_CrosshairType")
+		net.WriteInt(crosshairType, 3)
+		net.Send(ply)
+		lastCrosshairType[playerID] = crosshairType
+	end
+end
+
+--Update footstep type
+local lastFootstepType
 function Srnet_UpdatePlayerFootstepType(ply, footstepType)
-	if lastFootstepfootstepType != footstepType then
+	local playerID = GetPlayerID(ply)
+
+	if lastFootstepType == nil then lastFootstepType = {} end
+	
+	if lastFootstepType[playerID] == nil or lastFootstepType[playerID] != footstepType then
 		net.Start("RENDER_FootstepType")
 		net.WriteInt(footstepType,3)
 		net.Send(ply)
-		lastFootstepfootstepType = footstepType	
+		lastFootstepType[playerID] = footstepType	
 	end
 
 end
